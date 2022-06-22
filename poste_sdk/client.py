@@ -16,6 +16,9 @@ class BoxClient:
 
     def __init__(self, address, password):
         self.server = zmail.server(address, password)
+        self.address = address
+        self.password = password
+        self.id_ = None
 
     def get_email_cnt(self):
         """
@@ -40,7 +43,9 @@ class BoxClient:
         """
         count, size = self.server.stat()
         if count:
-            return Mail(**self.server.get_latest())
+            v = Mail(**self.server.get_latest())
+            self.id_ = v.id_
+            return v
         return None
 
     def delete_by_id(self, id_):
@@ -79,17 +84,20 @@ class PosteClient:
         List all Domains
         :return:
         """
-        res = self.client.get(url=f'{self.uri}domains?page={page}&paging={paging}', timeout=(2, 2)).json()
-
-        return [Domains(**i) for i in res['results']]
+        res = self.client.get(url=f'{self.uri}domains?page={page}&paging={paging}', timeout=(2, 2))
+        if res.status_code != 200:
+            raise Exception(f'get_domains res:{res.status_code},{res.text}')
+        return [Domains(**i) for i in res.json()['results']]
 
     def get_boxes(self) -> List[Box]:
         """
         List all Boxes
         :return:
         """
-        res = self.client.get(url=f'{self.uri}boxes', timeout=(2, 2)).json()
-        return [Box(**i) for i in res['results']]
+        res = self.client.get(url=f'{self.uri}boxes', timeout=(2, 2))
+        if res.status_code != 200:
+            raise Exception(f'get_domains res:{res.status_code},{res.text}')
+        return [Box(**i) for i in res.json()['results']]
 
     def init_box_client(self, email_prefix, password, domain=None) -> BoxClient:
         """

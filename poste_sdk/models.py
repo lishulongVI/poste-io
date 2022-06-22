@@ -53,8 +53,8 @@ class Box(GenericModel):
         None,
         description='Is this redirect only (empty data)'
     )
-    redirect_to: str = Field(
-        None,
+    redirect_to: List[str] = Field(
+        [],
         description='If it is redirect, where it is directed[ If it is redirect, where it is directedstring]'
     )
     discard: bool = Field(
