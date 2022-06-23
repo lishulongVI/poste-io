@@ -3,6 +3,15 @@
 =================
 
 
+
+安装
+------------
+.. code-block:: python
+
+    pip install poste-sdk -U
+
+
+
 获取可用域名
 ------------
 
