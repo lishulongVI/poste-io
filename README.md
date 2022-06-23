@@ -1,69 +1,18 @@
-### Poste-sdk
+## Poste-sdk
 
 > poste操作助手
 
-### 部署Poste
+### Poste服务部署
+1. 生成文档 `cd docs && make html`
+2. [在线文档](https://poste-sdk.readthedocs.io)
 
-### docker-compose
 
+### 安装
 ```
-version: '3'
-
-services:
-  mailserver:
-    image: analogic/poste.io
-    container_name: mailserver
-    restart: unless-stopped
-    ports:
-      - "25:25"
-      - "80:80"
-      - "443:443"
-      - "4190:4190"
-      - "110:110"
-      - "143:143"
-      - "465:465"
-      - "587:587"
-      - "993:993"
-      - "995:995"
-    privileged: true
-    environment:
-      - HTTPS=ON
-      - TZ=America/Mexico_City
-    volumes:
-      - ./mailserver_data:/data
+pip install poste-sdk
 ```
 
-### DNS配置
-
-https://poste.io/doc/configuring-dns
-
-
-
-#### Admin操作
-
-```python
-from typing import List
-
-from poste_sdk.client import PosteClient
-from poste_sdk.models import Domains
-from poste_sdk.models import Box
-
-with PosteClient(address='管理账户', password='密码', domain='域名') as client:
-    # 获取可用域名
-    domains = client.get_domains()
-    assert isinstance(domains, List)
-    assert isinstance(domains[0], Domains)
-    # 获取邮箱列表
-    boxes = client.get_boxes()
-    assert isinstance(boxes, List)
-    assert isinstance(boxes[0], Box)
-
-```
-
-
-
-#### 邮箱操作
-
+### 简要使用
 ```python
 from poste_sdk.client import PosteClient
 from poste_sdk.client import BoxClient
@@ -71,7 +20,8 @@ from poste_sdk.models import Mail
 
 with PosteClient(address='管理账户', password='密码', domain='域名') as client:
     # 初始化
-    box_client = client.init_box_client(email_prefix='test', password='test')
+
+    box_client = client.init_box_client(email_prefix='test', password='test',domain=None) 
     assert isinstance(box_client, BoxClient)
     # 获取最近1条邮件
     mail = box_client.get_latest()
@@ -89,6 +39,4 @@ with PosteClient(address='管理账户', password='密码', domain='域名') as 
 
     # 清空邮件
     box_client.drop_mails()
-
 ```
-
