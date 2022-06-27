@@ -48,6 +48,50 @@ class BoxClient:
             return v
         return None
 
+    def get_origin_mails(
+            self,
+            subject=None,
+            start_time=None,
+            end_time=None,
+            sender=None,
+            start_index: Optional[int] = None,
+            end_index: Optional[int] = None
+    ) -> list:
+        """
+        获取邮件列表
+        """
+        count, size = self.server.stat()
+        if not count:
+            return []
+        else:
+            start_index = 1 if start_index is None else start_index
+            end_index = count if end_index is None else end_index
+        z = self.server.get_mails(
+            subject=subject,
+            start_time=start_time,
+            end_time=end_time,
+            sender=sender,
+            start_index=start_index,
+            end_index=end_index,
+
+        )
+        return [Mail(**i) for i in z]
+
+    def get_emails(self, cnt):
+        """
+        获取最近几条邮件
+        :param cnt:
+        :return:
+        """
+        count, size = self.server.stat()
+        if not count:
+            return []
+
+        return self.get_origin_mails(
+            start_index=count - cnt,
+            end_index=cnt
+        )
+
     def delete_by_id(self, id_):
         """
         删除指定邮件

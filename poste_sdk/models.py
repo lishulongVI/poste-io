@@ -108,3 +108,4 @@ class Mail(GenericModel):
     subject: str = Field(..., alias='subject')
     content_text: List[str] = Field(..., )
     content_html: List[str] = Field(..., )
+    attachments: List[Dict] = Field([], description='附件')
