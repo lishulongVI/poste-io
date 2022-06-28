@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poste-sdk"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["lishulong <lishulong.never@gmail.com>"]
 license = "MIT"
