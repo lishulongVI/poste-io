@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from pydantic.generics import GenericModel
 from pydantic.fields import Field
@@ -108,4 +108,4 @@ class Mail(GenericModel):
     subject: str = Field(..., alias='subject')
     content_text: List[str] = Field(..., )
     content_html: List[str] = Field(..., )
-    attachments: List[Dict[str, bytes]] = Field([], description='附件')
+    attachments: List[Tuple[str, bytes]] = Field([], description='附件')

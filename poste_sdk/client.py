@@ -89,7 +89,7 @@ class BoxClient:
 
         return self.get_origin_mails(
             start_index=count - cnt,
-            end_index=cnt
+            end_index=count
         )
 
     def delete_by_id(self, id_):
