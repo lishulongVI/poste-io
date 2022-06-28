@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Optional
 
 import httpx
 import zmail
