@@ -116,9 +116,9 @@ class PosteClient:
     适配https://poste.io/
     """
 
-    def __init__(self, address, password, domain):
+    def __init__(self, address, password, domain, verify_ssl=True):
         self.uri = f'https://{domain}/admin/api/v1/'
-        self.client = httpx.Client(auth=(address, password))
+        self.client = httpx.Client(auth=(address, password), verify=verify_ssl)
 
     def __str__(self):
         return self.uri
