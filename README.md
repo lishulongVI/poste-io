@@ -18,7 +18,7 @@ from poste_sdk.client import PosteClient
 from poste_sdk.client import BoxClient
 from poste_sdk.models import Mail
 
-with PosteClient(address='管理账户', password='密码', domain='域名') as client:
+with PosteClient(address='管理账户', password='密码', domain='域名/ip', verify_ssl=False) as client:
     # 初始化
 
     box_client = client.init_box_client(email_prefix='test', password='test',domain=None) 
