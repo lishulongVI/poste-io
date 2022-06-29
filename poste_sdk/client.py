@@ -133,15 +133,27 @@ class PosteClient:
             raise Exception(f'get_domains res:{res.status_code},{res.text}')
         return [Domains(**i) for i in res.json()['results']]
 
-    def get_boxes(self) -> List[Box]:
+    def get_boxes(self, page=1, paging=50) -> List[Box]:
         """
         List all Boxes
+        :param page:
+        :param paging:
         :return:
         """
-        res = self.client.get(url=f'{self.uri}boxes', timeout=(2, 2))
+        res = self.client.get(url=f'{self.uri}boxes?page={page}&paging={paging}', timeout=(2, 2))
         if res.status_code != 200:
-            raise Exception(f'get_domains res:{res.status_code},{res.text}')
+            raise Exception(f'get_boxes res:{res.status_code},{res.text}')
         return [Box(**i) for i in res.json()['results']]
+
+    def delete_box(self, address):
+        """
+        删除邮箱
+        :param address:
+        :return:
+        """
+        res = self.client.delete(url=f'{self.uri}boxes/{address}', timeout=(2, 2))
+        if res.status_code != 204:
+            raise Exception(f'delete_box res:{res.status_code},{res.text}')
 
     def init_box_client(self, email_prefix, password, domain=None) -> BoxClient:
         """
