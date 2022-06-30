@@ -1,10 +1,10 @@
 import random
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import httpx
 import zmail
 
-from poste_sdk.models import Mail, Domains, Box
+from poste_sdk.models import Mail, Domains, Boxes
 
 
 class BoxClient:
@@ -133,7 +133,7 @@ class PosteClient:
             raise Exception(f'get_domains res:{res.status_code},{res.text}')
         return [Domains(**i) for i in res.json()['results']]
 
-    def get_boxes(self, page=1, paging=50) -> List[Box]:
+    def get_boxes(self, page=1, paging=50) -> Boxes:
         """
         List all Boxes
         :param page:
@@ -143,17 +143,21 @@ class PosteClient:
         res = self.client.get(url=f'{self.uri}boxes?page={page}&paging={paging}', timeout=(2, 2))
         if res.status_code != 200:
             raise Exception(f'get_boxes res:{res.status_code},{res.text}')
-        return [Box(**i) for i in res.json()['results']]
+        return Boxes(**res.json())
 
-    def delete_box(self, address):
+    def delete_box(self, address) -> Tuple[bool, str]:
         """
         删除邮箱
         :param address:
         :return:
         """
         res = self.client.delete(url=f'{self.uri}boxes/{address}', timeout=(2, 2))
-        if res.status_code != 204:
-            raise Exception(f'delete_box res:{res.status_code},{res.text}')
+        if res.status_code == 204:
+            return True, 'success'
+        elif res.status_code == 404:
+            return False, 'invalid email'
+        else:
+            return False, f'delete_box res:{res.status_code},{res.text}'
 
     def init_box_client(self, email_prefix, password, domain=None) -> BoxClient:
         """

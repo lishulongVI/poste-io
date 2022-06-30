@@ -63,6 +63,30 @@ class Box(GenericModel):
     )
 
 
+class Boxes(GenericModel):
+    page: int = Field(
+        ...,
+        description='第几页'
+    )
+    paging: int = Field(
+        ...,
+        description='每页多少条记录'
+    )
+    last_page: int = Field(
+        ...,
+        description='总页数'
+    )
+    results_count: int = Field(
+        ...,
+        description='总记录数'
+    )
+
+    results: List[Box] = Field(
+        ...,
+        description='box记录'
+    )
+
+
 class Domains(GenericModel):
     """
     可用域名
