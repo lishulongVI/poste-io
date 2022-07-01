@@ -203,14 +203,15 @@ class PosteClient:
         pg_total = d.last_page
         bean = [i for i in d.results if i.created[:10] <= lt_dt]
         page = 1
-        while page < pg_total:
+        while page <= pg_total:
             if keep_account is False:
                 for i in bean:
                     self.delete_box(address=i.address)
             else:
                 for i in bean:
                     cl = BoxClient(address=i.address, password=i.user)
-                    cl.drop_mails()
+                    cl.get_email_cnt() and cl.drop_mails()
+            page += 1
             bean = [i for i in self.get_boxes(page=page, paging=500).results if i.created[:10] <= lt_dt]
 
     def __enter__(self):
