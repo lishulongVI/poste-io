@@ -128,7 +128,7 @@ class Mail(GenericModel):
     """
     id_: int = Field(..., alias='id')
     from_: str = Field(..., alias='from')
-    _date: datetime = Field(..., alias='date')
+    date_: datetime = Field(..., alias='date')
     subject: str = Field(..., alias='subject')
     content_text: List[str] = Field(..., )
     content_html: List[str] = Field(..., )
