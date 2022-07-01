@@ -1,6 +1,6 @@
 import random
 from typing import List, Optional, Tuple
-
+import datetime
 import httpx
 import zmail
 
@@ -159,9 +159,9 @@ class PosteClient:
         else:
             return False, f'delete_box res:{res.status_code},{res.text}'
 
-    def init_box_client(self, email_prefix, password, domain=None) -> BoxClient:
+    def init_box_client(self, email_prefix, password=None, domain=None) -> BoxClient:
         """
-        初始化一个Box，不存在就创建
+        初始化一个Box，不存在就创建, 默认密码就是邮箱前缀
         :param email_prefix:
         :param password:
         :param domain:
@@ -169,6 +169,8 @@ class PosteClient:
         """
         if domain is None:
             domain = random.choice(self.get_domains()).name
+        if password is None:
+            password = email_prefix
 
         email = f'{email_prefix}@{domain}'
         req = {
@@ -186,6 +188,30 @@ class PosteClient:
         else:
             raise Exception(f'create_account res:{res.status_code},{res.text}')
         return BoxClient(email, password)
+
+    def clean(self, lt_dt=None, keep_account=False):
+        """
+        清除账户,默认昨天的账户
+        是否保留账户，默认不保留
+        :return:
+        """
+        if lt_dt is None:
+            lt_dt = str(datetime.datetime.now() - datetime.timedelta(days=-1))[:10]
+
+        # 分页遍历移除
+        d = self.get_boxes(page=1, paging=500)
+        pg_total = d.last_page
+        bean = [i for i in d.results if i.created[:10] <= lt_dt]
+        page = 1
+        while page < pg_total:
+            if keep_account is False:
+                for i in bean:
+                    self.delete_box(address=i.address)
+            else:
+                for i in bean:
+                    cl = BoxClient(address=i.address, password=i.user)
+                    cl.drop_mails()
+            bean = [i for i in self.get_boxes(page=page, paging=500).results if i.created[:10] <= lt_dt]
 
     def __enter__(self):
         return self
