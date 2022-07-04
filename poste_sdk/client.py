@@ -119,6 +119,7 @@ class PosteClient:
     def __init__(self, address, password, domain, verify_ssl=True):
         self.uri = f'https://{domain}/admin/api/v1/'
         self.client = httpx.Client(auth=(address, password), verify=verify_ssl)
+        self.admin_address = address
 
     def __str__(self):
         return self.uri
@@ -151,6 +152,8 @@ class PosteClient:
         :param address:
         :return:
         """
+        if self.admin_address == address or 'admin' in address:
+            return False, 'admin email delete 403'
         res = self.client.delete(url=f'{self.uri}boxes/{address}', timeout=(2, 2))
         if res.status_code == 204:
             return True, 'success'
@@ -191,6 +194,7 @@ class PosteClient:
 
     def clean(self, lt_dt=None, keep_account=False):
         """
+        仅删除普通账户，admin账户跳过
         清除账户,默认昨天的账户
         是否保留账户，默认不保留
         :return:
@@ -206,7 +210,8 @@ class PosteClient:
         while page <= pg_total:
             if keep_account is False:
                 for i in bean:
-                    self.delete_box(address=i.address)
+                    if i.super_admin is False:
+                        self.delete_box(address=i.address)
             else:
                 for i in bean:
                     cl = BoxClient(address=i.address, password=i.user)
